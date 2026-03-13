@@ -3,6 +3,7 @@ import CyberBackground from './components/sections/CyberBackground';
 import Hero from './components/sections/Hero';
 import ProjectsShowcase from './components/sections/ProjectsShowcase';
 import AboutContact from './components/sections/AboutContact';
+import { Analytics } from "@vercel/analytics/react";
 import './index.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <ProjectsShowcase />
         <AboutContact />
       </div>
+      <Analytics />
     </div>
   );
 }
