@@ -29,14 +29,25 @@ export default function AboutContact() {
     e.preventDefault();
     setFormStatus('sending');
 
+    const form = e.target as HTMLFormElement;
+    const name = (form.elements.namedItem('name') as HTMLInputElement).value;
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+    const subject = (form.elements.namedItem('subject') as HTMLInputElement).value;
+    const message = (form.elements.namedItem('message') as HTMLTextAreaElement).value;
+
+    const body = `Hi Jay,\n\nMy name is ${name} (${email}).\n\n${message}`;
+
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=jaywarale1@gmail.com&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
     setTimeout(() => {
+      window.open(gmailUrl, '_blank');
       setFormStatus('sent');
-      (e.target as HTMLFormElement).reset();
+      form.reset();
 
       setTimeout(() => {
         setFormStatus('idle');
       }, 3000);
-    }, 1500);
+    }, 800);
   };
 
   const frontendSkills = [
