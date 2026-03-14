@@ -1,93 +1,137 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Navbar() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
 
-  const navLinks = [
-    { label: 'HOME', href: '#home' },
-    { label: 'PROJECTS', href: '#projects' },
-    { label: 'SKILLS', href: '#skills' },
-    { label: 'ABOUT', href: '#about' },
-    { label: 'CONTACT', href: '#contact' },
+  const links = [
+    { id: 'home', label: 'Home' },
+    { id: 'projects', label: 'Projects' },
+    { id: 'skills', label: 'Skills' },
+    { id: 'about', label: 'About' },
+    { id: 'contact', label: 'Contact' },
   ];
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    const target = document.querySelector(href);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
-    }
-    setIsMobileMenuOpen(false);
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Track active section with IntersectionObserver
+  useEffect(() => {
+    const sectionIds = links.map((l) => l.id);
+    const observers: IntersectionObserver[] = [];
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) setActiveSection(id);
+        },
+        { rootMargin: '-40% 0px -55% 0px' }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, []);
+
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    setIsMobileOpen(false);
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass-nav" id="main-nav">
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isScrolled ? 'glass-nav shadow-lg' : 'bg-transparent'
+      }`}
+      id="main-nav"
+    >
+      <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Logo */}
-        <a
-          href="#home"
-          onClick={(e) => handleNavClick(e, '#home')}
-          className="flex items-center gap-3 group"
+        <button
+          onClick={() => scrollTo('home')}
+          className="flex items-center gap-2.5 group"
+          aria-label="Go to top"
         >
-          <div className="relative w-9 h-9 border border-neon-cyan/60 flex items-center justify-center rotate-45 group-hover:border-neon-cyan group-hover:shadow-neon-cyan transition-all duration-300">
-            <div className="w-3 h-3 bg-neon-cyan/80 -rotate-45"></div>
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-teal flex items-center justify-center group-hover:shadow-glow-sm transition-all duration-300">
+            <span className="text-white font-display font-bold text-sm">JW</span>
           </div>
-          <span className="font-space text-xl font-bold tracking-tight text-white group-hover:text-neon-cyan transition-colors duration-300">
-            JAY<span className="text-neon-cyan">.W</span>
+          <span className="font-display text-lg font-bold text-text-primary group-hover:text-accent-light transition-colors duration-300">
+            Jay<span className="text-accent-light">.dev</span>
           </span>
-        </a>
+        </button>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              onClick={(e) => handleNavClick(e, link.href)}
-              className="font-mono text-xs tracking-[0.15em] text-hud-muted hover:text-neon-cyan transition-all duration-300 relative group"
+        {/* Desktop Links */}
+        <div className="hidden md:flex items-center gap-1">
+          {links.map((link) => (
+            <button
+              key={link.id}
+              onClick={() => scrollTo(link.id)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                activeSection === link.id
+                  ? 'text-accent-light bg-accent/10'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
+              }`}
             >
-              <span className="text-neon-cyan/50 mr-1 group-hover:text-neon-cyan">//</span>
               {link.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-neon-cyan group-hover:w-full transition-all duration-300"></span>
-            </a>
+            </button>
           ))}
         </div>
 
         {/* Mobile Toggle */}
         <button
           className="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle mobile menu"
+          onClick={() => setIsMobileOpen(!isMobileOpen)}
+          aria-label="Toggle menu"
         >
-          <span className={`w-6 h-[2px] bg-neon-cyan transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-[5px]' : ''}`}></span>
-          <span className={`w-6 h-[2px] bg-neon-cyan transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></span>
-          <span className={`w-6 h-[2px] bg-neon-cyan transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-[5px]' : ''}`}></span>
+          <span
+            className={`w-5 h-[2px] bg-text-primary transition-all duration-300 ${
+              isMobileOpen ? 'rotate-45 translate-y-[5px]' : ''
+            }`}
+          />
+          <span
+            className={`w-5 h-[2px] bg-text-primary transition-all duration-300 ${
+              isMobileOpen ? 'opacity-0 scale-0' : ''
+            }`}
+          />
+          <span
+            className={`w-5 h-[2px] bg-text-primary transition-all duration-300 ${
+              isMobileOpen ? '-rotate-45 -translate-y-[5px]' : ''
+            }`}
+          />
         </button>
       </div>
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden absolute top-20 left-0 right-0 glass-nav border-t border-neon-cyan/10 transition-all duration-300 overflow-hidden ${
-          isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        className={`md:hidden overflow-hidden transition-all duration-400 ${
+          isMobileOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="px-6 py-6 space-y-4">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              onClick={(e) => handleNavClick(e, link.href)}
-              className="block font-mono text-sm tracking-[0.15em] text-hud-muted hover:text-neon-cyan transition-colors duration-300 py-2 border-b border-neon-cyan/5"
+        <div className="glass-nav border-t border-surface-border px-6 py-4 space-y-1">
+          {links.map((link, i) => (
+            <button
+              key={link.id}
+              onClick={() => scrollTo(link.id)}
+              className={`block w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                activeSection === link.id
+                  ? 'text-accent-light bg-accent/10'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
+              }`}
+              style={{ animationDelay: `${i * 50}ms` }}
             >
-              <span className="text-neon-cyan/50 mr-2">&gt;</span>
               {link.label}
-            </a>
+            </button>
           ))}
         </div>
       </div>
-
-      {/* Bottom neon glow line */}
-      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-neon-cyan/30 to-transparent"></div>
     </nav>
   );
 }

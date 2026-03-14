@@ -1,75 +1,46 @@
-# Jay Warale — Cyberpunk Portfolio
+# Jay Warale — 3D Portfolio Website
 
-A futuristic **cyberpunk-themed** personal portfolio website built with modern web technologies. Features neon glow effects, glitch text animations, holographic HUD elements, matrix particle backgrounds, and a complete interactive experience.
+An immersive, interactive 3D portfolio website built with React, TypeScript, Three.js (React Three Fiber), and Tailwind CSS. Features a deep space theme with floating 3D geometries, particle fields, bloom post-processing, and glass-morphism UI components.
 
-## 🚀 Tech Stack
+## Tech Stack
 
-| Technology | Purpose |
-|---|---|
-| **React 19** | UI Components |
-| **TypeScript** | Type Safety |
-| **Vite 7** | Build Tool & Dev Server |
-| **Tailwind CSS 3** | Utility-First Styling |
-| **Framer Motion** | Animations (available) |
-| **GSAP** | Advanced Animations (available) |
+- **Framework:** React 19 + TypeScript + Vite
+- **3D Engine:** Three.js via React Three Fiber + Drei + Postprocessing
+- **Styling:** Tailwind CSS 3.4
+- **Animations:** CSS animations, Intersection Observer scroll triggers, GSAP, Framer Motion
+- **Deployment:** Vercel (with Analytics)
 
-## 📁 Project Structure
+## Features
 
-```
-Jay_Website/
-├── docs/
-│   └── Jay_Resume.pdf          # Downloadable CV
-├── public/
-│   └── vite.svg
-├── src/
-│   ├── components/
-│   │   └── sections/
-│   │       ├── CyberBackground.tsx   # Animated particle grid background
-│   │       ├── Navbar.tsx            # Cyber navigation with mobile menu
-│   │       ├── Hero.tsx              # Glitch title + HUD hero section
-│   │       ├── ProjectsShowcase.tsx  # GitHub project cards
-│   │       └── AboutContact.tsx      # Skills + About + Contact + Footer
-│   ├── App.tsx
-│   ├── main.tsx
-│   └── index.css                     # Cyberpunk design system
-├── index.html
-├── tailwind.config.js
-├── package.json
-└── vite.config.ts
-```
+- 🌌 **3D Background Scene** — Animated particle field with floating wireframe geometries and bloom effects
+- ✨ **Hero Section** — Typing animation, parallax mouse tracking, gradient name, rotating orbital rings
+- 📁 **Projects** — 3D perspective tilt cards on hover with staggered scroll-reveal animations
+- 🛠️ **Skills** — Animated progress bars triggered on scroll across Frontend, Backend, and Tools categories
+- 👤 **About** — Glass card bio with stats and download resume/GitHub CTAs
+- 📬 **Contact** — Working contact form (Gmail compose), email/GitHub/LinkedIn links
 
-## 🛠️ Development
+## Getting Started
 
 ```bash
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
+```
 
-# Build for production
+## Build
+
+```bash
 npm run build
-
-# Preview production build
 npm run preview
 ```
 
-## 🌐 Deploy to Vercel
+## Project Structure
 
-1. Push code to GitHub
-2. Go to [vercel.com](https://vercel.com) → Import your GitHub repository
-3. Vercel auto-detects Vite — click **Deploy**
-4. Your site is live!
-
-## ✨ Features
-
-- **Glitch text animations** on hero title
-- **Neon glow effects** (cyan & magenta) throughout
-- **Animated particle background** with connection lines
-- **Scanline overlay** for CRT/hacker aesthetic
-- **Working Download CV** button (serves `docs/Jay_Resume.pdf`)
-- **Real GitHub projects** with live links
-- **Animated skill bars** with intersection observer
-- **Contact form** with visual submission feedback
-- **Fully responsive** mobile-first design
-- **Smooth scroll** navigation
+```
+src/
+├── components/
+│   ├── 3d/          # Three.js 3D components (Scene3D, ParticleField, FloatingGeometry)
+│   └── sections/    # Page sections (Navbar, Hero3D, Projects3D, Skills3D, About3D, Contact3D, Footer)
+├── App.tsx          # Main app shell
+├── main.tsx         # React entry point
+└── index.css        # Design system & utilities
+```

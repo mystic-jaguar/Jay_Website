@@ -1,65 +1,54 @@
 # Human Action Required
 
-## Prerequisites — Software to Install
+## Software Prerequisites
 
-### 1. Node.js (Required)
-- Download from: https://nodejs.org/
-- Install the **LTS version** (v20+)
-- Verify: `node --version` and `npm --version`
+Make sure you have the following installed:
 
-### 2. Git (Required)
-- Download from: https://git-scm.com/
-- Verify: `git --version`
+1. **Node.js** (v18 or later)
+   - Download from: https://nodejs.org/
+   - Verify: `node --version`
+
+2. **npm** (comes with Node.js)
+   - Verify: `npm --version`
+
+3. **Git** (optional, for version control)
+   - Download from: https://git-scm.com/
 
 ## Setup Steps
 
-### Step 1: Install Dependencies
-```bash
-cd Jay_Website
-npm install
+1. Open a terminal in the project root (`c:\Jay_Website`)
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open the URL shown in the terminal (usually `http://localhost:5173`)
+
+## API Keys
+
+**None required!** This is a fully client-side application with no external API dependencies.
+
+## Resume File
+
+Place your resume PDF at:
 ```
-
-### Step 2: Run Development Server
-```bash
-npm run dev
+docs/Jay_Resume.pdf
 ```
-Open `http://localhost:5173` in your browser.
+The "Download CV" buttons link to this file. If you rename it, update the `href` in `Hero3D.tsx` and `About3D.tsx`.
 
-### Step 3: Build for Production
-```bash
-npm run build
-```
+## Deployment (Vercel)
 
-## Deploy to Vercel
+1. Push to GitHub
+2. Import the repo into [Vercel](https://vercel.com)
+3. Vercel auto-detects Vite — just click Deploy
+4. Vercel Analytics is already integrated in the app
 
-### Step 1: Push to GitHub
-```bash
-git add .
-git commit -m "Cyberpunk portfolio redesign"
-git push origin main
-```
+## Customization
 
-### Step 2: Deploy on Vercel
-1. Go to https://vercel.com and sign in with GitHub
-2. Click **"Add New → Project"**
-3. Import your `Jay_Website` repository
-4. Vercel auto-detects Vite settings — click **Deploy**
-5. Your site will be live at `your-project.vercel.app`
-
-## API Keys Required
-
-**None** — This is a static frontend project with no API keys needed.
-
-## Important Files
-
-| File | Purpose |
-|---|---|
-| `docs/Jay_Resume.pdf` | Your CV — the "Download CV" button serves this file |
-| `src/components/sections/ProjectsShowcase.tsx` | Edit project descriptions and GitHub URLs here |
-| `src/components/sections/AboutContact.tsx` | Edit bio text, skills data, and contact email here |
-| `src/components/sections/Hero.tsx` | Edit hero title, subtitle, and status text here |
-
-## Notes
-
-- Replace `docs/Jay_Resume.pdf` with your updated resume anytime
-- The contact form currently shows visual feedback only (no backend). To add real email sending, integrate a service like EmailJS, Formspree, or Resend.
+- **Personal info** (name, email, GitHub): Update in the section components under `src/components/sections/`
+- **Projects**: Edit the `projects` array in `Projects3D.tsx`
+- **Skills**: Edit the `skillCategories` array in `Skills3D.tsx`
+- **Colors/Theme**: Modify `tailwind.config.js` and `src/index.css`
