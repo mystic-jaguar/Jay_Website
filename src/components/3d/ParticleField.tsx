@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-const count = 1200;
+const count = window.matchMedia('(max-width: 767px)').matches ? 400 : 1200;
 
 // Spread along the whole camera path (z: +20 → -180) so dust drifts past as you travel
 const { positions, colors } = (() => {

@@ -91,6 +91,8 @@ function Sun({ position, radius, color }: { position: [number, number, number]; 
 }
 
 export default function Scene3D() {
+  // Phones: skip full-screen bloom/vignette passes, antialiasing and hi-dpi rendering (main GPU cost)
+  const mobile = useMemo(() => window.matchMedia('(max-width: 767px)').matches, []);
   return (
     <div className="fixed inset-0 z-0" style={{ pointerEvents: 'none' }}>
       {/* Sunset horizon behind the canvas */}
@@ -98,8 +100,8 @@ export default function Scene3D() {
 
       <Canvas
         camera={{ position: STOPS[0], fov: 60, far: 120 }}
-        dpr={[1, 1.5]}
-        gl={{ antialias: true, alpha: true }}
+        dpr={mobile ? 1 : [1, 1.5]}
+        gl={{ antialias: !mobile, alpha: true, powerPreference: 'high-performance' }}
         style={{ background: 'transparent' }}
       >
         <fog attach="fog" args={['#1a1030', 15, 70]} />
@@ -117,10 +119,12 @@ export default function Scene3D() {
           <StopLayers key={i} stop={stop} index={i} />
         ))}
 
-        <EffectComposer>
-          <Bloom intensity={0.9} luminanceThreshold={0.2} luminanceSmoothing={0.9} mipmapBlur />
-          <Vignette offset={0.3} darkness={0.7} />
-        </EffectComposer>
+        {!mobile && (
+          <EffectComposer>
+            <Bloom intensity={0.9} luminanceThreshold={0.2} luminanceSmoothing={0.9} mipmapBlur />
+            <Vignette offset={0.3} darkness={0.7} />
+          </EffectComposer>
+        )}
       </Canvas>
     </div>
   );
