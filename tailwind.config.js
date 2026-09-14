@@ -12,26 +12,26 @@ export default {
         display: ['Space Grotesk', 'sans-serif'],
       },
       colors: {
-        // Deep space palette
+        // Solar Dusk — deep indigo
         void: {
-          DEFAULT: '#030014',
-          50: '#0a0525',
-          100: '#110835',
-          200: '#1a0d4a',
+          DEFAULT: '#0d0818',
+          50: '#1a1030',
+          100: '#24163f',
+          200: '#3b2360',
         },
-        // Primary accent — electric violet
+        // Primary accent — sunset orange
         accent: {
-          DEFAULT: '#7c3aed',
-          light: '#a78bfa',
-          dark: '#5b21b6',
-          glow: '#8b5cf6',
+          DEFAULT: '#ff7a45',
+          light: '#ffb38a',
+          dark: '#e0552a',
+          glow: '#ff8f45',
         },
-        // Secondary accent — aurora teal 
+        // Secondary accent — golden hour 
         teal: {
-          DEFAULT: '#2dd4bf',
-          light: '#5eead4',
-          dark: '#0d9488',
-          glow: '#14b8a6',
+          DEFAULT: '#ffd166',
+          light: '#ffe29a',
+          dark: '#e0a93a',
+          glow: '#ffc34d',
         },
         // Warm accent — solar amber
         amber: {
@@ -41,16 +41,16 @@ export default {
         },
         // Text hierarchy
         text: {
-          primary: '#f1f5f9',
-          secondary: '#94a3b8',
-          muted: '#475569',
+          primary: '#fff4e6',
+          secondary: '#c9b8c9',
+          muted: '#7a6680',
         },
         // Surface colors
         surface: {
-          DEFAULT: 'rgba(15, 10, 40, 0.6)',
-          solid: '#0f0a28',
-          hover: 'rgba(124, 58, 237, 0.08)',
-          border: 'rgba(124, 58, 237, 0.15)',
+          DEFAULT: 'rgba(26, 16, 48, 0.6)',
+          solid: '#1a1030',
+          hover: 'rgba(255, 122, 69, 0.08)',
+          border: 'rgba(255, 122, 69, 0.15)',
         },
       },
       animation: {
@@ -86,10 +86,10 @@ export default {
         },
       },
       boxShadow: {
-        'glow-sm': '0 0 15px rgba(124, 58, 237, 0.3)',
-        'glow-md': '0 0 30px rgba(124, 58, 237, 0.4), 0 0 60px rgba(124, 58, 237, 0.15)',
-        'glow-lg': '0 0 40px rgba(124, 58, 237, 0.5), 0 0 80px rgba(124, 58, 237, 0.2)',
-        'glow-teal': '0 0 20px rgba(45, 212, 191, 0.3), 0 0 40px rgba(45, 212, 191, 0.15)',
+        'glow-sm': '0 0 15px rgba(255, 122, 69, 0.3)',
+        'glow-md': '0 0 30px rgba(255, 122, 69, 0.4), 0 0 60px rgba(255, 122, 69, 0.15)',
+        'glow-lg': '0 0 40px rgba(255, 122, 69, 0.5), 0 0 80px rgba(255, 122, 69, 0.2)',
+        'glow-teal': '0 0 20px rgba(255, 209, 102, 0.3), 0 0 40px rgba(255, 209, 102, 0.15)',
         'glass': '0 8px 32px rgba(0, 0, 0, 0.3)',
       },
     },
