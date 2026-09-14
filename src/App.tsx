@@ -70,20 +70,19 @@ function useScrollCards3D() {
         }
         if (narrow) {
           // Mobile: same zoom-in-from-front / zoom-out-to-back as desktop, but without blur/saturate
-          // (blur on top of the cards was the scroll jank). One card at a time: it rests centred
-          // (tall cards: while they fill the screen), and with the 30vh gap from index.css the
-          // outgoing card is fully gone before the incoming one finishes arriving.
-          // Timed by the card's centre (edge timing made tall phone cards invisible until they hit the top).
-          // Starts appearing once its centre enters the bottom of the screen, fully in when centred;
-          // tall cards hold while their extra height scrolls by.
-          const c = top + h / 2 - vh / 2;
-          const hold = Math.max(0, (h - vh * 0.8) / 2);
-          let inStart = hold;
-          if (dTop < vh) inStart = Math.max(inStart, dTop + h / 2 - vh / 2); // first screen: visible on load
-          inStart = Math.max(inStart, dTop - maxScroll + h / 2 - vh / 2); // page end: must be able to arrive
-          const off = c > inStart ? c - inStart : c < -hold ? c + hold : 0;
-          // Leaving ramp is shorter so the old card is gone before the next one is fully in
-          const m = Math.max(-1, Math.min(1, off / (vh * (off < 0 ? 0.35 : 0.5))));
+          // (blur on top of the cards was the scroll jank).
+          // Fully in while the card is on screen (may overhang an edge by 15% of its height), zooming
+          // over 40% of its height as it slides past an edge — so two cards that fit show together.
+          // Tuned at 375x700: two cards in together often, three almost never.
+          const bot = top + h;
+          const pad = h * 0.15;
+          let lower = vh + pad;
+          if (dTop + h < vh) lower = Infinity; // first screen: visible on load
+          lower = Math.max(lower, dTop + h - maxScroll); // page end: must be able to arrive
+          const off = h > vh
+            ? (top > vh * 0.1 ? top - vh * 0.1 : bot < vh * 0.9 ? bot - vh * 0.9 : 0) // taller than screen
+            : bot > lower ? bot - lower : top < -pad ? top + pad : 0;
+          const m = Math.max(-1, Math.min(1, off / (h * 0.4)));
           const a = Math.abs(m) * Math.abs(m) * (3 - 2 * Math.abs(m)); // smoothstep
           el.style.translate = '';
           el.style.scale = m ? String(m > 0 ? 1 + a * 0.8 : 1 - a * 0.5) : '';
