@@ -69,20 +69,22 @@ function useScrollCards3D() {
           if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
         }
         if (narrow) {
-          // Mobile: cheap compositor-only fade/scale, no filter/translate (blur on top of the cards'
-          // backdrop-filter was the main scroll jank). Fully in once the top edge reaches mid-screen,
-          // starts leaving once the bottom edge passes mid-screen.
-          let arrive = vh * 0.5;
+          // Mobile: same zoom-in-from-front / zoom-out-to-back as desktop, but without blur/saturate
+          // (blur on top of the cards was the scroll jank). One card at a time: it rests centred
+          // (tall cards: while they fill the screen), and with the 30vh gap from index.css the
+          // outgoing card is fully gone before the incoming one finishes arriving.
+          let arrive = Math.max((vh - h) / 2, vh * 0.1); // screen y where the top edge is at rest
+          const leave = Math.min((vh + h) / 2, vh * 0.9); // screen y where the bottom edge starts leaving
           if (dTop < vh) arrive = Math.max(arrive, dTop); // first screen: visible on load
           arrive = Math.max(arrive, dTop - maxScroll); // page end: must be able to arrive
-          const inOff = (top - arrive) / (vh * 0.5);
-          const outOff = (top + h - vh * 0.5) / (vh * 0.5);
-          const m = inOff > 0 ? Math.min(1, inOff) : outOff < 0 ? Math.max(-1, outOff) : 0;
-          const a = Math.abs(m);
+          const RAMP = vh * 0.4;
+          const off = top > arrive ? top - arrive : top + h < leave ? top + h - leave : 0;
+          const m = Math.max(-1, Math.min(1, off / RAMP));
+          const a = Math.abs(m) * Math.abs(m) * (3 - 2 * Math.abs(m)); // smoothstep
           el.style.translate = '';
-          el.style.scale = m ? String(m > 0 ? 1 + a * 0.15 : 1 - a * 0.15) : '';
-          // filter opacity (not style.opacity) so Skills' own opacity reveal isn't overridden
-          el.style.filter = m ? `opacity(${1 - a})` : '';
+          el.style.scale = m ? String(m > 0 ? 1 + a * 1.2 : 1 - a * 0.6) : '';
+          // filter opacity (not style.opacity) so the sections' own opacity reveal isn't overridden
+          el.style.filter = m ? `opacity(${m > 0 ? Math.pow(1 - a, 2) : 1 - a})` : '';
           el.style.pointerEvents = a > 0.5 ? 'none' : '';
           el.style.zIndex = m ? '1' : '2';
           return;

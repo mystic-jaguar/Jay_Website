@@ -274,6 +274,10 @@ section:not(#home) .glass-card, .btn-primary, .btn-outline {
   section:not(#home) .glass-card, .btn-primary, .btn-outline {
     will-change: auto;
   }
+  /* Gap between zooming cards so only one is on screen at a time (see App.tsx) */
+  section:not(#home) .glass-card:not(:has(form)) {
+    margin-block: 12vh; /* 24vh gap; below ~22vh two cards can show at once */
+  }
 }
 
 /* Extra breathing room so each zooming card gets its own moment on screen (only slight stacking) */
