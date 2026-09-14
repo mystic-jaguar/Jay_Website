@@ -73,18 +73,22 @@ function useScrollCards3D() {
           // (blur on top of the cards was the scroll jank). One card at a time: it rests centred
           // (tall cards: while they fill the screen), and with the 30vh gap from index.css the
           // outgoing card is fully gone before the incoming one finishes arriving.
-          let arrive = Math.max((vh - h) / 2, vh * 0.1); // screen y where the top edge is at rest
-          const leave = Math.min((vh + h) / 2, vh * 0.9); // screen y where the bottom edge starts leaving
-          if (dTop < vh) arrive = Math.max(arrive, dTop); // first screen: visible on load
-          arrive = Math.max(arrive, dTop - maxScroll); // page end: must be able to arrive
-          const RAMP = vh * 0.4;
-          const off = top > arrive ? top - arrive : top + h < leave ? top + h - leave : 0;
-          const m = Math.max(-1, Math.min(1, off / RAMP));
+          // Timed by the card's centre (edge timing made tall phone cards invisible until they hit the top).
+          // Starts appearing once its centre enters the bottom of the screen, fully in when centred;
+          // tall cards hold while their extra height scrolls by.
+          const c = top + h / 2 - vh / 2;
+          const hold = Math.max(0, (h - vh * 0.8) / 2);
+          let inStart = hold;
+          if (dTop < vh) inStart = Math.max(inStart, dTop + h / 2 - vh / 2); // first screen: visible on load
+          inStart = Math.max(inStart, dTop - maxScroll + h / 2 - vh / 2); // page end: must be able to arrive
+          const off = c > inStart ? c - inStart : c < -hold ? c + hold : 0;
+          // Leaving ramp is shorter so the old card is gone before the next one is fully in
+          const m = Math.max(-1, Math.min(1, off / (vh * (off < 0 ? 0.35 : 0.5))));
           const a = Math.abs(m) * Math.abs(m) * (3 - 2 * Math.abs(m)); // smoothstep
           el.style.translate = '';
-          el.style.scale = m ? String(m > 0 ? 1 + a * 1.2 : 1 - a * 0.6) : '';
+          el.style.scale = m ? String(m > 0 ? 1 + a * 0.8 : 1 - a * 0.5) : '';
           // filter opacity (not style.opacity) so the sections' own opacity reveal isn't overridden
-          el.style.filter = m ? `opacity(${m > 0 ? Math.pow(1 - a, 2) : 1 - a})` : '';
+          el.style.filter = m ? `opacity(${1 - a})` : '';
           el.style.pointerEvents = a > 0.5 ? 'none' : '';
           el.style.zIndex = m ? '1' : '2';
           return;
