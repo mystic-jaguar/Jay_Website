@@ -10,7 +10,7 @@ export default function Contact3D() {
     if (!el) return;
     const obs = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.1 }
+      { threshold: 0, rootMargin: '0px 0px -15% 0px' } // % thresholds never fire on sections taller than ~6 screens (mobile)
     );
     obs.observe(el);
     return () => obs.disconnect();

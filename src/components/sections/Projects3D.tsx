@@ -52,7 +52,7 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
     if (!el) return;
     const obs = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.15 }
+      { threshold: 0, rootMargin: '0px 0px -15% 0px' } // any edge on screen, not a % of a tall mobile element
     );
     obs.observe(el);
     return () => obs.disconnect();
