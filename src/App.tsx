@@ -28,13 +28,15 @@ function useScrollCards3D() {
     let raf = 0;
     let last = 0;
     let smoothY = window.scrollY;
+    // Touch scrolling already has native momentum; heavy easing on top makes cards lag the finger
+    const easeRate = window.matchMedia('(pointer: coarse)').matches ? 18 : 7;
     const update = (now: number) => {
       // Ease a smoothed scroll value toward the real one (frame-rate independent),
       // so wheel steps glide instead of snapping. Keep looping until it settles.
       const dt = last ? Math.min((now - last) / 1000, 0.1) : 1 / 60;
       last = now;
       const target = window.scrollY;
-      smoothY += (target - smoothY) * (1 - Math.exp(-dt * 7));
+      smoothY += (target - smoothY) * (1 - Math.exp(-dt * easeRate));
       if (Math.abs(target - smoothY) < 0.5) smoothY = target;
       raf = smoothY === target ? 0 : requestAnimationFrame(update);
       if (!raf) last = 0;
@@ -51,11 +53,20 @@ function useScrollCards3D() {
         'section:not(#home) .glass-card:not(:has(form)), :is(.btn-primary, .btn-outline):not(.glass-card *)',
       );
       targets.forEach((el) => {
-        const docCenter = docTop(el) + el.offsetHeight / 2;
-        // Where on screen the element is "at rest": viewport center, except items on the first
-        // screen (visible on load) and items near the page end (can't scroll up to center).
-        const anchor = docCenter < vh ? docCenter : Math.max(vh / 2, docCenter - maxScroll);
-        const raw = Math.max(-1, Math.min(1, (docCenter - smoothY - anchor) / (vh * 0.6)));
+        const h = el.offsetHeight;
+        const dTop = docTop(el);
+        const top = dTop - smoothY;
+        // Rest band, measured by the card's edges (not its center) so tall cards on mobile are
+        // fully arrived as soon as they fill the screen instead of after you've scrolled past:
+        // short cards rest when centered; tall ones from when their top reaches mid-screen until
+        // their bottom passes mid-screen, so they're fully arrived while you're reading them.
+        const short = h < vh * 0.5;
+        let startLine = short ? (vh - h) / 2 : vh * 0.5; // screen y where the top edge arrives
+        const endLine = short ? (vh + h) / 2 : vh * 0.5; // screen y where the bottom edge starts leaving
+        if (dTop < vh) startLine = Math.max(startLine, dTop); // first screen: visible on load
+        startLine = Math.max(startLine, dTop - maxScroll); // page end: must be able to arrive
+        const off = top > startLine ? top - startLine : top + h < endLine ? top + h - endLine : 0;
+        const raw = Math.max(-1, Math.min(1, off / (vh * 0.6)));
         // Dead zone around rest: the item stays fully visible before zooming starts
         const u = Math.sign(raw) * Math.max(0, Math.abs(raw) - HOLD) / (1 - HOLD);
         const a = Math.abs(u) * Math.abs(u) * (3 - 2 * Math.abs(u)); // smoothstep: glides in and out
