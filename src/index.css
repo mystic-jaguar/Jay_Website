@@ -265,6 +265,8 @@ section:not(#home) .glass-card, .btn-primary, .btn-outline {
 }
 
 /* Extra breathing room so each zooming card gets its own moment on screen (only slight stacking) */
-section:not(#home) .glass-card:not(:has(form)) {
-  margin-block: 12vh;
+@media (min-width: 768px) {
+  section:not(#home) .glass-card:not(:has(form)) {
+    margin-block: 12vh;
+  }
 }

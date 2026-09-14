@@ -60,15 +60,19 @@ function useScrollCards3D() {
         // fully arrived as soon as they fill the screen instead of after you've scrolled past:
         // short cards rest when centered; tall ones from when their top reaches mid-screen until
         // their bottom passes mid-screen, so they're fully arrived while you're reading them.
-        const short = h < vh * 0.5;
-        let startLine = short ? (vh - h) / 2 : vh * 0.5; // screen y where the top edge arrives
-        const endLine = short ? (vh + h) / 2 : vh * 0.5; // screen y where the bottom edge starts leaving
+        // On narrow screens every card uses the edge rule, with a wide rest band and no extra hold,
+        // so the next card is already showing while the previous one scrolls away (no blank screen).
+        const narrow = window.innerWidth < 768;
+        const short = !narrow && h < vh * 0.5;
+        let startLine = short ? (vh - h) / 2 : vh * (narrow ? 0.7 : 0.5); // screen y where the top edge arrives
+        const endLine = short ? (vh + h) / 2 : vh * (narrow ? 0.3 : 0.5); // screen y where the bottom edge starts leaving
         if (dTop < vh) startLine = Math.max(startLine, dTop); // first screen: visible on load
         startLine = Math.max(startLine, dTop - maxScroll); // page end: must be able to arrive
         const off = top > startLine ? top - startLine : top + h < endLine ? top + h - endLine : 0;
         const raw = Math.max(-1, Math.min(1, off / (vh * 0.6)));
         // Dead zone around rest: the item stays fully visible before zooming starts
-        const u = Math.sign(raw) * Math.max(0, Math.abs(raw) - HOLD) / (1 - HOLD);
+        const hold = narrow ? 0 : HOLD;
+        const u = Math.sign(raw) * Math.max(0, Math.abs(raw) - hold) / (1 - hold);
         const a = Math.abs(u) * Math.abs(u) * (3 - 2 * Math.abs(u)); // smoothstep: glides in and out
         const scale = u > 0 ? 1 + a * 1.8 : 1 - a * 0.75; // zoom in from front / zoom out to back
         el.style.translate = `0 ${-u * vh * 0.2}px`; // slight hold toward center → only a little stacking
