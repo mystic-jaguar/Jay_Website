@@ -55,7 +55,7 @@ function CameraRig() {
 
 // Three depth layers per stop, biased right so they frame the left-aligned text.
 // Near layers slide past fast, far layers slowly — that's the parallax.
-function StopLayers({ stop, index }: { stop: [number, number, number]; index: number }) {
+function StopLayers({ stop, index, lite }: { stop: [number, number, number]; index: number; lite: boolean }) {
   const [x, y, z] = stop;
   const layers: { pos: [number, number, number]; scale: number; wireframe: boolean }[] = [
     { pos: [x + 4.5, y - 1, z - 8], scale: 0.7, wireframe: false },
@@ -74,6 +74,7 @@ function StopLayers({ stop, index }: { stop: [number, number, number]; index: nu
           speed={0.3 + i * 0.15}
           distort={0.15}
           wireframe={l.wireframe}
+          lite={lite}
         />
       ))}
     </>
@@ -100,7 +101,7 @@ export default function Scene3D() {
 
       <Canvas
         camera={{ position: STOPS[0], fov: 60, far: 120 }}
-        dpr={mobile ? 1 : [1, 1.5]}
+        dpr={mobile ? 0.75 : [1, 1.5]}
         gl={{ antialias: !mobile, alpha: true, powerPreference: 'high-performance' }}
         style={{ background: 'transparent' }}
       >
@@ -116,7 +117,7 @@ export default function Scene3D() {
         <Sun position={[0, -2, -185]} radius={8} color="#ffd166" />
 
         {STOPS.map((stop, i) => (
-          <StopLayers key={i} stop={stop} index={i} />
+          <StopLayers key={i} stop={stop} index={i} lite={mobile} />
         ))}
 
         {!mobile && (

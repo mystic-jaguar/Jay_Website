@@ -53,9 +53,9 @@ function useScrollCards3D() {
       const targets = document.querySelectorAll<HTMLElement>(
         'section:not(#home) .glass-card:not(:has(form)), :is(.btn-primary, .btn-outline):not(.glass-card *)',
       );
-      targets.forEach((el) => {
-        const h = el.offsetHeight;
-        const dTop = docTop(el);
+      // Read every layout value before writing any style: interleaving reads with the previous
+      // card's style writes forced a full layout per card per frame (big jank on phones).
+      [...targets].map((el) => ({ el, h: el.offsetHeight, dTop: docTop(el) })).forEach(({ el, h, dTop }) => {
         const top = dTop - smoothY;
         // Rest band, measured by the card's edges (not its center) so tall cards on mobile are
         // fully arrived as soon as they fill the screen instead of after you've scrolled past:

@@ -11,6 +11,7 @@ interface FloatingGeometryProps {
   speed?: number;
   distort?: number;
   wireframe?: boolean;
+  lite?: boolean;
 }
 
 export default function FloatingGeometry({
@@ -21,6 +22,7 @@ export default function FloatingGeometry({
   speed = 1,
   distort = 0.3,
   wireframe = false,
+  lite = false,
 }: FloatingGeometryProps) {
   const meshRef = useRef<THREE.Mesh>(null);
 
@@ -48,18 +50,32 @@ export default function FloatingGeometry({
   return (
     <mesh ref={meshRef} position={position} scale={scale}>
       {getGeometry()}
-      <MeshDistortMaterial
-        color={color}
-        emissive={color}
-        emissiveIntensity={0.15}
-        roughness={0.2}
-        metalness={0.8}
-        distort={distort}
-        speed={2}
-        wireframe={wireframe}
-        transparent
-        opacity={wireframe ? 0.4 : 0.7}
-      />
+      {lite ? (
+        // Phones: no per-vertex noise shader
+        <meshStandardMaterial
+          color={color}
+          emissive={color}
+          emissiveIntensity={0.15}
+          roughness={0.2}
+          metalness={0.8}
+          wireframe={wireframe}
+          transparent
+          opacity={wireframe ? 0.4 : 0.7}
+        />
+      ) : (
+        <MeshDistortMaterial
+          color={color}
+          emissive={color}
+          emissiveIntensity={0.15}
+          roughness={0.2}
+          metalness={0.8}
+          distort={distort}
+          speed={2}
+          wireframe={wireframe}
+          transparent
+          opacity={wireframe ? 0.4 : 0.7}
+        />
+      )}
     </mesh>
   );
 }
