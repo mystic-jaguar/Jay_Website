@@ -26,15 +26,28 @@ export default function Contact3D() {
     const subject = (form.elements.namedItem('subject') as HTMLInputElement).value;
     const message = (form.elements.namedItem('message') as HTMLTextAreaElement).value;
 
-    const body = `Hi Jay,\n\nMy name is ${name} (${email}).\n\n${message}`;
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=jaywarale1@gmail.com&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const to = 'jaywarale1@gmail.com';
+    const body = `Hi Jay,\n\nName: ${name}\nEmail: ${email}\n\n${message}`;
+    const su = encodeURIComponent(subject);
+    const bd = encodeURIComponent(body);
+    const mailto = `mailto:${to}?subject=${su}&body=${bd}`;
+    const gmailWeb = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${su}&body=${bd}`;
+    const ua = navigator.userAgent;
 
-    setTimeout(() => {
-      window.open(gmailUrl, '_blank');
-      setFormStatus('sent');
-      form.reset();
-      setTimeout(() => setFormStatus('idle'), 3000);
-    }, 800);
+    if (/Android/i.test(ua)) {
+      // Gmail app compose; Chrome falls back to Gmail web if the app is missing
+      window.location.href = `intent:${to}?subject=${su}&body=${bd}#Intent;scheme=mailto;package=com.google.android.gm;S.browser_fallback_url=${encodeURIComponent(gmailWeb)};end`;
+    } else if (/iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) {
+      // Gmail iOS app; if it didn't open (not installed), fall back to the default mail app
+      window.location.href = `googlegmail:///co?to=${to}&subject=${su}&body=${bd}`;
+      setTimeout(() => { if (document.visibilityState === 'visible') window.location.href = mailto; }, 1500);
+    } else {
+      // Desktop: open synchronously so popup blockers allow it
+      window.open(gmailWeb, '_blank', 'noopener');
+    }
+
+    setFormStatus('sent');
+    setTimeout(() => setFormStatus('idle'), 3000);
   };
 
   return (
@@ -211,7 +224,7 @@ export default function Contact3D() {
                   {formStatus === 'sending'
                     ? 'Sending...'
                     : formStatus === 'sent'
-                    ? '✓ Message Sent!'
+                    ? '✓ Opening Gmail…'
                     : 'Send Message'}
                 </button>
               </form>
